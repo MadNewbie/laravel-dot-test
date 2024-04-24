@@ -20,7 +20,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $books = Book::latest()->take(10)->get();
+    return view('welcome', compact('books'));
 });
 
 Route::get('/dashboard', function () {
