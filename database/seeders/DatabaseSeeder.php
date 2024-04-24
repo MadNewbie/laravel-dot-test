@@ -3,10 +3,38 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
+    private $permissions = [
+        'author-list',
+        'author-create',
+        'author-edit',
+        'author-delete',
+        'book-list',
+        'book-create',
+        'book-edit',
+        'book-delete',
+        'role-list',
+        'role-create',
+        'role-edit',
+        'role-delete',
+        'type-list',
+        'type-create',
+        'type-edit',
+        'type-delete',
+        'user-list',
+        'user-create',
+        'user-edit',
+        'user-delete',
+    ];
+
     /**
      * Seed the application's database.
      */
@@ -18,5 +46,22 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+        foreach ($this->permissions as $permission) {
+            Permission::create(['name' => $permission]);
+        }
+
+        $user = User::create([
+            'name' => 'Administrator',
+            'email' => 'admin@this.app',
+            'password' => Hash::make('password'),
+        ]);
+
+        $role = Role::create(['name' => 'Administrator']);
+
+        $permissions = Permission::pluck('id', 'id')->all();
+
+        $role->syncPermissions($permissions);
+
+        $user->assignRole([$role->id]);
     }
 }
